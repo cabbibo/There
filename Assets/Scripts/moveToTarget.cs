@@ -3,6 +3,8 @@ using System.Collections;
 
 public class moveToTarget : MonoBehaviour {
 
+  public GameObject Ea;
+
   public GameObject Hip;
   public GameObject FootL;
   public GameObject FootR;
@@ -25,6 +27,7 @@ public class moveToTarget : MonoBehaviour {
 
   public Vector3 targetL;
   public Vector3 targetR;
+  public Vector3 newPositionStartVec;
 
   public Vector3 ogL;
   public Vector3 ogR;
@@ -33,6 +36,8 @@ public class moveToTarget : MonoBehaviour {
   public bool turning;
 
   public float rotationVal;
+
+  public Ea EaSript;
 
 
   private Vector3 hipStartPos;
@@ -49,21 +54,23 @@ public class moveToTarget : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-    Vector3 ogPos =  Hip.transform.position - hipStartPos;
+    Vector3 ogPos = transform.position;
     targetVec = (ogPos - targetPos);
 
-    Hip.transform.position = ((targetVec * -.1f) + ogPos) + hipStartPos;
+    //targetDist = ogPos - towardsVec;
 
+    //Hip.transform.position = ((targetVec * -.1f) + ogPos) + hipStartPos;
+    transform.position =  ((targetVec * -.1f) + ogPos);
+   // print(transform.position);
+
+
+// Checking to see if we need to be rotating
     nVec = towardsVec;
     oVec = oTowardsVec;
     nVec.Normalize();
     oVec.Normalize();
 
-
     float dif = Vector3.Dot(nVec,oVec);
-
-
-    Debug.transform.position = targetPos + towardsVec;
 
     float rad = Mathf.Atan2(nVec.z , nVec.x);
     rad *=  (180 / Mathf.PI);
@@ -80,8 +87,6 @@ public class moveToTarget : MonoBehaviour {
     rotationVal += .01f * (dif+3.0f);
 
     if( rotationVal > .7f ){
-      //rotationVal = 0;
-      //print( dif );
       turning = false;
     }
 
@@ -89,13 +94,24 @@ public class moveToTarget : MonoBehaviour {
 
 
 
+   Debug.transform.position = newPositionStartVec;
+
+   Vector3 currentPos = transform.worldToLocalMatrix.MultiplyVector( new Vector3(0,0,0) );
+
+   float h = getHeight( transform.position );
+   print( transform.localPosition );
+
+  // print( h );
+
+   Debug.transform.localPosition = transform.localPosition;
+
     /*
       Checks if we need to move foot, and moves it
     */
     if( turning == false ){
 
-      Vector3 distance1 = Hip.transform.position - FootL.transform.position;
-      Vector3 distance2 = Hip.transform.position - FootR.transform.position;  
+      Vector3 distance1 = transform.position - FootL.transform.position;
+      Vector3 distance2 = transform.position - FootR.transform.position;  
 
       if( distance1.magnitude > .35f && liftedR == false && justDownL == false ){
         getNewFootPos( true ); 
@@ -216,6 +232,7 @@ public class moveToTarget : MonoBehaviour {
   }
 
   public void setNewTarget( Vector3 tarPos , Vector3 tarVec ){
+    newPositionStartVec = transform.position;
     oTowardsVec = towardsVec;
     targetPos = tarPos;
     towardsVec = tarVec;

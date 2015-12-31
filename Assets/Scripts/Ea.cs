@@ -39,10 +39,11 @@ public class Ea : MonoBehaviour {
 
 
 
-    v1 = transform.position + targetDir * (((targetDist / 10) * .01f) + .01f);
+    v1 = transform.position + targetDir * (((targetDist / 100) * .01f) + .01f);
     transform.position = v1;
 
     Center.transform.position = transform.worldToLocalMatrix.MultiplyVector( new Vector3(0,0,0) );
+    //print( Center.transform.localPosition );
 
     if( Wand1.GetComponent<controllerCast>() != null ){
       hitPos = Wand1.GetComponent<controllerCast>().hitPos;
@@ -64,7 +65,7 @@ public class Ea : MonoBehaviour {
 
   public void updateTarget( Vector3 t ){
     targetVec = -transform.position; 
-    targetPos =  -transform.position + t; 
+    targetPos = -transform.position + t; 
     targetVec -= targetPos; 
     targetVec = -targetVec; 
 
